@@ -1,0 +1,13 @@
+spring:
+  kafka:
+    ssl-key-password: password
+    ssl-cert-location: cert.crt
+    enable-ssl: false
+    consumer:
+      retries: 3
+      bootstrap-servers: localhost:9092
+      group-id: spring-boot-kafka-consumer-sample
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      topic: sample-topic

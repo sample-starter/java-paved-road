@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,prometheus
+  metrics:
+    enable:
+      jvm: true
+    export:
+      prometheus:
+        histogram-flavor: prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: '*'
+        readiness:
+          include: '*'
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+    elasticsearch:
+      enabled: false

@@ -1,0 +1,42 @@
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger.html
+    enabled: true
+    disable-swagger-default-url: true
+    config:
+      title: Initializer API
+      version: v1
+
+
+templates:
+  starter-list:
+    -
+      starter: common
+      paths:
+        - starter-common/src/main/java/org/example/common
+        - starter-common/src/main/resources
+        - starter-common/src/main/root-resources
+    -
+      starter: api
+      paths:
+        - starter-api/src/main/java/org/example/api
+      application: starter-api/src/main/resources/application.yml
+      pom: starter-api/pom.xml
+    -
+      starter: kafka
+      paths:
+        - starter-kafka/src/main/java/org/example/kafka
+      application: starter-kafka/src/main/resources/application.yml
+      pom: starter-kafka/pom.xml
+    -
+      starter: cicd
+      paths:
+        - starter-cicd/src/main/resources
+    -
+      starter: sql
+      paths:
+        - starter-sql/src/main/java/org/example/sql
+      application: starter-sql/src/main/resources/application.yml
+      pom: starter-sql/pom.xml
