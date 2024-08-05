@@ -3,6 +3,7 @@ package org.example.handlers;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.example.config.CommonConfig;
 import org.example.dto.StarterRequest;
 import org.example.exception.HandlerException;
 import org.jdom2.JDOMException;
@@ -18,15 +19,17 @@ import java.nio.file.Paths;
 
 public class RepositoryHandler extends Handler {
 
-    private static final String GITHUB_API_URL = "https://api.github.com";
-    private static final String TOKEN = "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";
-    private static final String ORG_URI = "https://github.com/sample-starter/";
+    private CommonConfig commonConfig;
 
-    public RepositoryHandler() {
+    private static final String GITHUB_API_URL = "https://api.github.com";
+
+    public RepositoryHandler(CommonConfig config) {
+        this.commonConfig = config;
     }
 
-    public RepositoryHandler(Handler nextHandler) {
+    public RepositoryHandler(Handler nextHandler, CommonConfig config) {
         super(nextHandler);
+        this.commonConfig = config;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class RepositoryHandler extends Handler {
         super.handle(request);
     }
 
-    public static void getRepository(StarterRequest request) throws HandlerException {
+    public void getRepository(StarterRequest request) throws HandlerException {
 
         try {
             if (repositoryExists(request.getArtifactId())) {
@@ -53,11 +56,11 @@ public class RepositoryHandler extends Handler {
         }
     }
 
-    public static boolean repositoryExists(String repoName) {
+    public boolean repositoryExists(String repoName) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "token " + TOKEN);
+        headers.set("Authorization", "token " + commonConfig.getGitToken());
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
@@ -78,7 +81,7 @@ public class RepositoryHandler extends Handler {
         }
     }
 
-    public static void createGitHubRepository(String repoName, String description, boolean isPrivate) {
+    public void createGitHubRepository(String repoName, String description, boolean isPrivate) {
         RestTemplate restTemplate = new RestTemplate();
 
         JSONObject json = new JSONObject();
@@ -88,7 +91,7 @@ public class RepositoryHandler extends Handler {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "token " + TOKEN);
+        headers.set("Authorization", "token " + commonConfig.getGitToken());
 
         HttpEntity<String> entity = new HttpEntity<>(json.toString(), headers);
 
@@ -106,7 +109,7 @@ public class RepositoryHandler extends Handler {
         }
     }
 
-    public static void openRepository(String repoName) throws IOException, GitAPIException {
+    public void openRepository(String repoName) throws IOException, GitAPIException {
         String repoUrl = "https://github.com/sample-starter/"  + repoName + ".git";
         Path localPath = Paths.get(System.getProperty("java.io.tmpdir"), repoName);
 
@@ -115,7 +118,7 @@ public class RepositoryHandler extends Handler {
             Git.cloneRepository()
                     .setURI(repoUrl)
                     .setDirectory(localPath.toFile())
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(TOKEN, ""))
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(commonConfig.getGitToken(), ""))
                     .call();
         }
     }

@@ -1,11 +1,16 @@
 package org.example.config;
 
+import lombok.AllArgsConstructor;
 import org.example.handlers.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@AllArgsConstructor
 public class HandlerConfig {
+
+    CommonConfig commonConfig;
 
     @Bean
     public Handler exceptionHandler() {
@@ -39,7 +44,7 @@ public class HandlerConfig {
 
     @Bean
     public Handler repositoryHandler() {
-        return new RepositoryHandler(initializerHandler());
+        return new RepositoryHandler(initializerHandler(), commonConfig);
     }
 
     @Bean

@@ -1,3 +1,10 @@
+spring:
+  config:
+    import: optional:configtree:/etc/secrets/,optional:configtree:./secrets/
+
+github:
+  token: ${GIT_TOKEN}
+
 springdoc:
   api-docs:
     enabled: true
