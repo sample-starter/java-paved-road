@@ -2,6 +2,7 @@ package org.example.config;
 
 import lombok.AllArgsConstructor;
 import org.example.handlers.*;
+import org.example.utils.GitHubUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,11 @@ import org.springframework.context.annotation.Configuration;
 public class HandlerConfig {
 
     CommonConfig commonConfig;
+    GitHubUtil gitHubUtil;
 
     @Bean
     public Handler exceptionHandler() {
-        return new ExceptionHandler();
+        return new ExceptionHandler(commonConfig);
     }
 
     @Bean
@@ -24,22 +26,22 @@ public class HandlerConfig {
 
     @Bean
     public Handler cicdHandler() {
-        return new CICDHandler(successHandler());
+        return new CICDHandler(successHandler(), gitHubUtil);
     }
 
     @Bean
     public Handler kafkaHandler() {
-        return new KafkaHandler(cicdHandler());
+        return new KafkaHandler(cicdHandler(), gitHubUtil);
     }
 
     @Bean
     public Handler apiHandler() {
-        return new ApiHandler(kafkaHandler());
+        return new ApiHandler(kafkaHandler(), gitHubUtil);
     }
 
     @Bean
     public Handler initializerHandler() {
-        return new InitializerHandler(apiHandler());
+        return new InitializerHandler(apiHandler(), gitHubUtil);
     }
 
     @Bean

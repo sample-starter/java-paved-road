@@ -21,11 +21,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CICDHandler extends Handler {
 
-    public CICDHandler() {
+    private GitHubUtil gitHubUtil;
+
+    public CICDHandler(GitHubUtil gitHubUtil) {
+        this.gitHubUtil = gitHubUtil;
     }
 
-    public CICDHandler(Handler nextHandler) {
+    public CICDHandler(Handler nextHandler, GitHubUtil gitHubUtil) {
         super(nextHandler);
+        this.gitHubUtil = gitHubUtil;
     }
 
     @Override
@@ -33,7 +37,7 @@ public class CICDHandler extends Handler {
 
         try {
             addCICDSample(request);
-            GitHubUtil.pushToGitHub(request.getArtifactId());
+            gitHubUtil.pushToGitHub(request.getArtifactId());
         }
         catch(IOException | GitAPIException | URISyntaxException e) {
             throw new HandlerException(e);

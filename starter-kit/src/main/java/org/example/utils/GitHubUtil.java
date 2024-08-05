@@ -1,9 +1,12 @@
 package org.example.utils;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.example.config.CommonConfig;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -11,12 +14,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Slf4j
+@AllArgsConstructor
+@Component
 public class GitHubUtil {
 
-    private static final String TOKEN = "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";
+    private CommonConfig commonConfig;
     private static final String ORG_URI = "https://github.com/sample-starter/";
 
-    public static void pushToGitHub(String repoName) throws IOException, GitAPIException, URISyntaxException {
+    public void pushToGitHub(String repoName) throws IOException, GitAPIException, URISyntaxException {
 
         log.info("Push changes to GitHub repository: {}", repoName);
 
@@ -29,7 +34,7 @@ public class GitHubUtil {
                     .call();
 
             git.push()
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(TOKEN, ""))
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(commonConfig.getGitToken(), ""))
                     .call();
         }
     }

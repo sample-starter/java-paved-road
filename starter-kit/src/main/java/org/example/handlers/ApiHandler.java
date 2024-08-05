@@ -27,11 +27,15 @@ public class ApiHandler extends Handler {
 
     private static final String TARGET_FOLDER = "/api";
 
-    public ApiHandler() {
+    private GitHubUtil gitHubUtil;
+
+    public ApiHandler(GitHubUtil gitHubUtil) {
+        this.gitHubUtil = gitHubUtil;
     }
 
-    public ApiHandler(Handler nextHandler) {
+    public ApiHandler(Handler nextHandler, GitHubUtil gitHubUtil) {
         super(nextHandler);
+        this.gitHubUtil = gitHubUtil;
     }
 
     @Override
@@ -42,7 +46,7 @@ public class ApiHandler extends Handler {
             try {
                 addAPISample(request);
                 if(request.getRequestType() == RequestType.SERVICE) {
-                    GitHubUtil.pushToGitHub(request.getArtifactId());
+                    gitHubUtil.pushToGitHub(request.getArtifactId());
                 }
             } catch (IOException | GitAPIException | URISyntaxException | JDOMException e) {
                 throw new HandlerException(e);

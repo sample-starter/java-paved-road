@@ -28,12 +28,16 @@ import java.util.stream.Stream;
 @Slf4j
 public class InitializerHandler extends Handler {
 
-    public InitializerHandler() {
+    private final GitHubUtil gitHubUtil;
+
+    public InitializerHandler(GitHubUtil gitHubUtil) {
         super();
+        this.gitHubUtil = gitHubUtil;
     }
 
-    public InitializerHandler(Handler nextHandler) {
+    public InitializerHandler(Handler nextHandler, GitHubUtil gitHubUtil) {
         super(nextHandler);
+        this.gitHubUtil = gitHubUtil;
     }
 
     @Override
@@ -41,7 +45,7 @@ public class InitializerHandler extends Handler {
         try {
             initializeLocalRepository(request);
             if(request.getRequestType() == RequestType.SERVICE) {
-                GitHubUtil.pushToGitHub(request.getArtifactId());
+                gitHubUtil.pushToGitHub(request.getArtifactId());
             }
         }
         catch (IOException | GitAPIException | URISyntaxException | JDOMException e) {

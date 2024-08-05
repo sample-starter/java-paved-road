@@ -1,5 +1,6 @@
 package org.example.handlers;
 
+import org.example.config.CommonConfig;
 import org.example.dto.StarterRequest;
 import org.example.exception.HandlerException;
 import org.springframework.http.HttpEntity;
@@ -12,14 +13,16 @@ import org.springframework.web.client.RestTemplate;
 public class ExceptionHandler extends Handler {
 
     private static final String GITHUB_API_URL = "https://api.github.com";
-    private static final String TOKEN = "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";
+    private CommonConfig commonConfig;
 
 
-    public ExceptionHandler() {
+    public ExceptionHandler(CommonConfig config) {
+        this.commonConfig = config;
     }
 
-    public ExceptionHandler(Handler nextHandler) {
+    public ExceptionHandler(Handler nextHandler, CommonConfig config) {
         super(nextHandler);
+        this.commonConfig = config;
     }
 
     @Override
@@ -31,7 +34,7 @@ public class ExceptionHandler extends Handler {
             RestTemplate restTemplate = new RestTemplate();
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "token " + TOKEN);
+            headers.set("Authorization", "token " + commonConfig.getGitToken());
 
             HttpEntity<String> entity = new HttpEntity<>(headers);
 

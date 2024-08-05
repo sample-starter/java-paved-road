@@ -24,13 +24,17 @@ import java.util.Map;
 @Slf4j
 public class KafkaHandler extends Handler {
 
+    private final GitHubUtil gitHubUtil;
+
     private static final String TARGET_FOLDER = "/kafka";
 
-    public KafkaHandler() {
+    public KafkaHandler(GitHubUtil gitHubUtil) {
+        this.gitHubUtil = gitHubUtil;
     }
 
-    public KafkaHandler(Handler nextHandler) {
+    public KafkaHandler(Handler nextHandler, GitHubUtil gitHubUtil) {
         super(nextHandler);
+        this.gitHubUtil = gitHubUtil;
     }
 
     @Override
@@ -41,7 +45,7 @@ public class KafkaHandler extends Handler {
             try {
                 enhanceKafkaCode(request);
                 if (request.getRequestType() == RequestType.SERVICE) {
-                    GitHubUtil.pushToGitHub(request.getArtifactId());
+                    gitHubUtil.pushToGitHub(request.getArtifactId());
                 }
             } catch (IOException | GitAPIException | URISyntaxException | JDOMException e) {
                 throw new HandlerException(e);
