@@ -1,11 +1,11 @@
 spring:
   kafka:
-    ssl-key-password: password
-    ssl-cert-location: cert.crt
-    enable-ssl: false
+    bootstrap-servers: ${BOOTSTRAP_SERVERS}
+    ssl-key-password: ${KAFKA_SSL_PASSWORD}
+    ssl-cert-location: /etc/secrets/kafka_cert.jks
+    enable-ssl: ${KAFKA_ENABLE_SSL}
     consumer:
       retries: 3
-      bootstrap-servers: localhost:9092
       group-id: spring-boot-kafka-consumer-sample
       enable-auto-commit: false
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

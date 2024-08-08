@@ -1,5 +1,6 @@
 package org.example.handlers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -17,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Slf4j
 public class RepositoryHandler extends Handler {
 
     private CommonConfig commonConfig;
@@ -88,6 +90,8 @@ public class RepositoryHandler extends Handler {
         json.put("name", repoName);
         json.put("description", description);
         json.put("private", isPrivate);
+        json.put("default_branch", "main");
+        json.put("auto_init", true);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -103,9 +107,9 @@ public class RepositoryHandler extends Handler {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Repository created successfully: " + response.getBody());
+            log.info("Repository created successfully: " + response.getBody());
         } else {
-            System.out.println("Failed to create repository: " + response.getBody());
+            log.error("Failed to create repository: " + response.getBody());
         }
     }
 

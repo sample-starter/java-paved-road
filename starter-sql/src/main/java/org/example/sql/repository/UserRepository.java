@@ -1,7 +1,8 @@
-package org.example.repositories;
+package org.example.sql.repository;
 
-import org.example.entities.User;
+import org.example.sql.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

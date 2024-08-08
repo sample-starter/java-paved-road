@@ -1,4 +1,4 @@
-package org.example.kafka.utils;
+package org.example.kafkaconsumer.utils;
 
 import org.apache.kafka.common.header.Headers;
 

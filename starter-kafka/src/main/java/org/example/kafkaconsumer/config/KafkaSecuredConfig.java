@@ -1,4 +1,4 @@
-package org.example.kafka.config;
+package org.example.kafkaconsumer.config;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.common.config.SslConfigs;

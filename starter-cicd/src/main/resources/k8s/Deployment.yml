@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-spring-boot-app
+  name: sample-spring-boot-app
   labels:
-    app: my-spring-boot-app
+    app: sample-spring-boot-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: my-spring-boot-app
+      app: sample-spring-boot-app
   template:
     metadata:
       labels:
-        app: my-spring-boot-app
+        app: sample-spring-boot-app
     spec:
       containers:
-        - name: my-spring-boot-app
-          image: sample/my-spring-boot-app:latest
+        - name: sample-spring-boot-app
+          image: shikhara1022/sample-spring-boot-app:latest
           ports:
             - containerPort: 8080
           env:

@@ -32,8 +32,8 @@ import java.util.Map;
 @Slf4j
 public class SwaggerConfig {
 
-  private static final String GROUP_NAME = "Order Ingestion API v1";
-  private static final String[] paths = {"/v1/**", "/inventory-projection/v1/**"};
+  private static final String GROUP_NAME = "Initializer API v1";
+  private static final String[] paths = {"/v1/**"};
   private String title;
   private String version;
   private String bearerUrl;

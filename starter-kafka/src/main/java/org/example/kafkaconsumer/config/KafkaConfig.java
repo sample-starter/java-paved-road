@@ -1,4 +1,4 @@
-package org.example.kafka.config;
+package org.example.kafkaconsumer.config;
 
 import lombok.AllArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

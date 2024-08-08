@@ -1,8 +1,6 @@
-package org.example.kafka.consumer;
+package org.example.kafkaconsumer.config;
 
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.example.kafka.config.KafkaConfig;
-import org.example.kafka.config.KafkaSecuredConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -13,7 +11,7 @@ import java.util.Map;
 @Configuration
 public class BrokerConfig extends KafkaConfig {
 
-    @Value("${spring.kafka.consumer.bootstrap-servers}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String brokers;
 
     @Autowired

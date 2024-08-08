@@ -20,7 +20,7 @@ public class ServiceGenerator {
         try {
             validationHandler.handle(starterRequest);
         }
-        catch (HandlerException e) {
+        catch (RuntimeException | HandlerException e) {
             exceptionHandler.handle(starterRequest);
         }
 

@@ -25,12 +25,18 @@ public class TemplateConfig {
                 .collect(Collectors.toMap(fcDetails -> fcDetails.starter, Function.identity()));
     }
 
+    public StarterConfig getStarterConfig(String id) {
+        return starterConfigMap.get(id);
+    }
+
     @Data
     public static class StarterConfig {
         String starter;
         List<String> paths;
         String application;
+        String target;
         String pom;
+        String readme;
     }
 
 }

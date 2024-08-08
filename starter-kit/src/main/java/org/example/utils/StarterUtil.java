@@ -21,13 +21,11 @@ public class StarterUtil {
                 } else {
                     if(destination.toString().contains("src/main/java/")) {
                         String content = new String(Files.readAllBytes(path));
-//                        String newPackagePath = destination.getParent().toString().split("src/main/java/")[1].replace('/','.');
-//                        String updatedContent = content.replaceFirst("package\\s+[^;]+;", "package " + newPackagePath + ";");
 
-                        String sourceImport = sourcePath.getParent().toString().split("src/main/java/")[1].replace('/','.');
-                        String destinationImport = destinationPath.getParent().toString().split("src/main/java/")[1].replace('/','.');
+                        String sourceImport = path.getParent().toString().split("src/main/java/")[1].replace('/','.');
+                        String destinationImport = destination.getParent().toString().split("src/main/java/")[1].replace('/','.');
 
-                        String updatedContent = content.replaceAll(sourceImport, destinationImport);
+                        String updatedContent = updateContent(content, sourceImport, destinationImport);
 
                         Files.write(destination, updatedContent.getBytes());
                     }
@@ -37,6 +35,33 @@ public class StarterUtil {
                 }
             }
         }
+    }
+
+    /**
+     * The function updates all package and import statements of a .java class;
+     * @param content - content to update
+     * @param source - the source classpath
+     * @param target - the target classpath
+     * @return - updated class content with all packages and import replaced.
+     */
+    public static String updateContent(String content, String source, String target) {
+        String updatedContent = content.replaceAll(source, target);
+
+        while(true) {
+            int srcLastIdx = source.lastIndexOf('.');
+            int targetLastIdx = target.lastIndexOf('.');
+
+            if(source.substring(srcLastIdx+1).equals(target.substring(targetLastIdx+1))) {
+                source = source.substring(0, srcLastIdx);
+                target = target.substring(0, targetLastIdx);
+                updatedContent = updatedContent.replaceAll(source, target);
+            }
+            else {
+                break;
+            }
+        }
+
+        return updatedContent;
     }
 
 }

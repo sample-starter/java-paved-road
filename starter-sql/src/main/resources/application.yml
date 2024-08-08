@@ -1,23 +1,18 @@
 spring:
-  sql:
-    init:
-      mode: always # This is to always initialize a database using scripts as script-based initialization is performed by default only for embedded databases.
-  cloud:
-    azure:
-      cosmos:
-        database: order-ingestion
-  datasource: # Note: spring.datasource will have to be removed once AAD for SQL is configured.
-    url: jdbc:mysql://localhost:3306/your_database
-    username: your_username
-    password: your_password
-    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    initialization-mode: always # this is to indicate Spring Boot to always generate a db schema using `schema.sql` file.
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    platform: h2
+
   jpa:
-    defer-datasource-initialization: true # This will ensure, that after Hibernate schema creation is performed then additionally schema.sql is read for any additional schema changes and data.sql is executed to populate the database.
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
     hibernate:
-      dialect: org.hibernate.dialect.SQLServer2008Dialect
-      ddl-auto: none
-      show-sql: true
-      generate-ddl: false
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl # This is necessary to map property names of DAOs with the ones in SQL DB Tables.
+      ddl-auto: create
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console

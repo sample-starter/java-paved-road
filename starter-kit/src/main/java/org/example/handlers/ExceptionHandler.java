@@ -1,5 +1,6 @@
 package org.example.handlers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.config.CommonConfig;
 import org.example.dto.StarterRequest;
 import org.example.exception.HandlerException;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 public class ExceptionHandler extends Handler {
 
     private static final String GITHUB_API_URL = "https://api.github.com";
@@ -39,6 +41,7 @@ public class ExceptionHandler extends Handler {
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             try {
+                log.info("Deleting the repository: {}" , request.getArtifactId());
                 ResponseEntity<String> response = restTemplate.exchange(
                         GITHUB_API_URL + "/orgs/sample-starter/repos",
                         HttpMethod.POST,

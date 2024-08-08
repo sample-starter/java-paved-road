@@ -27,7 +27,6 @@ import java.util.Map;
 @Slf4j
 public class SwaggerConfig {
 
-  private static final String GROUP_NAME = "Order Ingestion API v1";
   private static final String[] paths = {"/**"};
   private String title;
   private String version;
@@ -47,7 +46,7 @@ public class SwaggerConfig {
 
   @Bean
   public GroupedOpenApi storeOpenApi(List<OpenApiCustomiser> customiserList) {
-    var openAPIBuilder = GroupedOpenApi.builder().group(GROUP_NAME).pathsToMatch(paths);
+    var openAPIBuilder = GroupedOpenApi.builder().group(title).pathsToMatch(paths);
     customiserList.forEach(openAPIBuilder::addOpenApiCustomiser);
     return openAPIBuilder.build();
   }

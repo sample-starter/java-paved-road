@@ -20,29 +20,29 @@ springdoc:
 templates:
   starter-list:
     -
-      starter: common
-      paths:
-        - starter-common/src/main/java/org/example/common
-        - starter-common/src/main/resources
-        - starter-common/src/main/root-resources
-    -
       starter: api
+      target: api
       paths:
         - starter-api/src/main/java/org/example/api
       application: starter-api/src/main/resources/application.yml
       pom: starter-api/pom.xml
     -
-      starter: kafka
+      starter: kafka-consumer
+      target: kafka
       paths:
-        - starter-kafka/src/main/java/org/example/kafka
+        - starter-kafka/src/main/java/org/example/kafkaconsumer
       application: starter-kafka/src/main/resources/application.yml
       pom: starter-kafka/pom.xml
     -
-      starter: cicd
+      starter: kafka-producer
+      target: kafka
       paths:
-        - starter-cicd/src/main/resources
+        - starter-kafka/src/main/java/org/example/kafkaproducer
+      application: starter-kafka/src/main/resources/application.yml
+      pom: starter-kafka/pom.xml
     -
       starter: sql
+      target: sql
       paths:
         - starter-sql/src/main/java/org/example/sql
       application: starter-sql/src/main/resources/application.yml

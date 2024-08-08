@@ -8,7 +8,6 @@ import org.example.dto.InitRequest;
 import org.example.dto.RequestType;
 import org.example.dto.StarterRequest;
 import org.example.exception.HandlerException;
-import org.example.generators.LibraryGenerator;
 import org.example.generators.ServiceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -26,17 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class InitController {
 
     ServiceGenerator serviceGenerator;
-    LibraryGenerator libraryGenerator;
 
     @Autowired
-    public InitController(ServiceGenerator serviceGenerator, LibraryGenerator libraryGenerator) {
+    public InitController(ServiceGenerator serviceGenerator) {
         this.serviceGenerator = serviceGenerator;
-        this.libraryGenerator = libraryGenerator;
     }
 
 
     @PostMapping("/createGitHubRepository")
-    public String createWebService(@RequestBody InitRequest initRequest) {
+    public String I(@RequestBody InitRequest initRequest) {
         if(initRequest.getRequestType() == RequestType.SERVICE) {
             try {
                 StarterRequest request = serviceGenerator.generate(initRequest);
@@ -54,12 +51,13 @@ public class InitController {
     public String createLibrary(@RequestBody InitRequest initRequest) {
         if(initRequest.getRequestType() == RequestType.LIBRARY) {
             try {
-                libraryGenerator.generate(initRequest);
+                StarterRequest request = serviceGenerator.generate(initRequest);
+                return request.getRepoName();
             } catch (HandlerException e) {
                 throw new RuntimeException(e);
             }
         }
-        return "result";
+        return "Failure";
     }
 
 }

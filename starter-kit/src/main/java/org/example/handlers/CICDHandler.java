@@ -35,12 +35,14 @@ public class CICDHandler extends Handler {
     @Override
     public void handle(final StarterRequest request) throws HandlerException {
 
-        try {
-            addCICDSample(request);
-            gitHubUtil.pushToGitHub(request.getArtifactId());
-        }
-        catch(IOException | GitAPIException | URISyntaxException e) {
-            throw new HandlerException(e);
+        if(request.getStatus() == StarterRequest.Status.SUCCESS) {
+            try {
+                addCICDSample(request);
+                gitHubUtil.pushToGitHub(request.getArtifactId());
+            }
+            catch(IOException | GitAPIException | URISyntaxException e) {
+                throw new HandlerException(e);
+            }
         }
 
         super.handle(request);
@@ -54,7 +56,8 @@ public class CICDHandler extends Handler {
         log.info("Copying source code from start-cicd for repo :{}" , request.getArtifactId());
         StarterUtil.copySourceModuleToLocalPath("starter-cicd/src/main/resources", localPath);
 
-        adjustAllK8sFiles(localPath.resolve("k8s"), request.getArtifactId());
+        adjustPipeline(localPath.resolve(".github/workflows"), request.getArtifactId());
+        adjustPipeline(localPath.resolve("k8s"), request.getArtifactId());
 
         // Initialize Git repository
         Git.init().setDirectory(localPath.toFile()).call();
@@ -67,17 +70,17 @@ public class CICDHandler extends Handler {
 
     }
 
-    private void adjustAllK8sFiles(Path k8s, String artifactId) throws IOException {
+    private void adjustPipeline(Path targetPath, String artifactId) throws IOException {
 
         // Get a list of all YAML files in the directory
-        List<Path> yamlFiles = Files.walk(k8s)
+        List<Path> yamlFiles = Files.walk(targetPath)
                 .filter(Files::isRegularFile)
                 .filter(path -> path.toString().endsWith(".yaml") || path.toString().endsWith(".yml"))
-                .collect(Collectors.toList());
+                .toList();
 
         // Process each YAML file
         for (Path filePath : yamlFiles) {
-            replaceTextInYamlFile(filePath, "my-spring-boot-app", artifactId);
+            replaceTextInYamlFile(filePath, "sample-spring-boot-app", artifactId);
         }
 
     }

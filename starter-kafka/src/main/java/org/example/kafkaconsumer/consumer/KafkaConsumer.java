@@ -1,9 +1,9 @@
-package org.example.kafka.consumer;
+package org.example.kafkaconsumer.consumer;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.example.kafka.service.KafkaConsumerService;
+import org.example.kafkaconsumer.service.KafkaConsumerService;
 import org.springframework.stereotype.Component;
 
 @Component

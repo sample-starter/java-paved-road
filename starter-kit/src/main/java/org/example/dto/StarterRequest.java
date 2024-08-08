@@ -1,6 +1,7 @@
 package org.example.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 @Getter
+@Setter
 public class StarterRequest {
 
     private String groupId;

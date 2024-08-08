@@ -8,6 +8,3 @@ springdoc:
     config:
       title: Example API
       version: v1
-
-server:
-  port: 8081

@@ -10,9 +10,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   build_and_test:
@@ -48,9 +48,9 @@ jobs:
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Container image
-        run: docker build -t ${{ secrets.DOCKER_REPO }}:latest .
+        run: docker build -t shikhara1022/sample-spring-boot-app:latest .
       - name: Publish Docker image
-        run: docker push ${{ secrets.DOCKER_REPO }}
+        run: docker push shikhara1022/sample-spring-boot-app:latest
 
 #  deploy-image:
 #    name: Deploy image to Kubernetes
