@@ -9,8 +9,8 @@ import java.util.stream.Stream;
 
 public class StarterUtil {
 
-    public static void copySourceModuleToLocalPath(String source, Path destinationPath) throws IOException {
-        Path sourcePath = Paths.get(source);
+    public static void copySourceModuleToLocalPath(String templatePath, String source, Path destinationPath) throws IOException {
+        Path sourcePath = Paths.get(templatePath, source);
         try (Stream<Path> paths = Files.walk(sourcePath)) {
             for (Path path : paths.toList()) {
                 Path destination = destinationPath.resolve(sourcePath.relativize(path));

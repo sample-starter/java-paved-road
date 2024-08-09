@@ -21,6 +21,7 @@ public class ServiceGenerator {
             validationHandler.handle(starterRequest);
         }
         catch (RuntimeException | HandlerException e) {
+            starterRequest.setStatus(StarterRequest.Status.FAILURE);
             exceptionHandler.handle(starterRequest);
         }
 

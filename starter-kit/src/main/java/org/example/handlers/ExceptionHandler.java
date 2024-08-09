@@ -32,6 +32,8 @@ public class ExceptionHandler extends Handler {
 
         if(request.getStatus() == StarterRequest.Status.FAILURE) {
 
+            log.error("Exception Occurred while creation of {}:{}", request.getOrganization(), request.getArtifactId());
+
             //Update SQL DB with Exception status.
             RestTemplate restTemplate = new RestTemplate();
 

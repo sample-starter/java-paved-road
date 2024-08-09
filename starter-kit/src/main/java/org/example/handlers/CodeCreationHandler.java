@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.example.config.CommonConfig;
 import org.example.config.TemplateConfig;
 import org.example.dto.DependencyRequest;
 import org.example.dto.RequestType;
@@ -59,6 +60,7 @@ public class CodeCreationHandler extends Handler {
     }
 
     private void processStarterConfig(TemplateConfig.StarterConfig config, StarterRequest request) throws RuntimeException {
+
         try {
             Path localPath = Paths.get(System.getProperty("java.io.tmpdir"), request.getArtifactId());
             addCodeSample(localPath, config, request);
@@ -72,7 +74,7 @@ public class CodeCreationHandler extends Handler {
                     git.add().addFilepattern(".").call();
                     git.commit().setMessage(String.format("Committing %s Sample changes", config.getStarter())).call();
                 }
-                gitHubUtil.pushToGitHub(request.getArtifactId());
+                gitHubUtil.pushToGitHub(request.getOrganization(), request.getArtifactId());
             }
         } catch (IOException | GitAPIException | URISyntaxException | JDOMException e) {
             request.setStatus(StarterRequest.Status.FAILURE);
@@ -85,8 +87,9 @@ public class CodeCreationHandler extends Handler {
         Files.createDirectories(localPath.resolve(request.getTargetCodePath()));
 
         for(String path : starterConfig.getPaths()) {
+
             log.info("Copying source code from {} for repo :{}" , path, request.getArtifactId());
-            StarterUtil.copySourceModuleToLocalPath(path,
+            StarterUtil.copySourceModuleToLocalPath(gitHubUtil.getTemplatePath(), path,
                     localPath.resolve(request.getTargetCodePath()+"/"+starterConfig.getTarget()));
         }
 
@@ -94,17 +97,17 @@ public class CodeCreationHandler extends Handler {
         log.info("Update application.yml for {} for repo :{}" , starterConfig.getStarter(), request.getArtifactId());
         String existingYamlPath = request.getTargetResourcePath()+"/application.yml";
         Map<String, Object> yamlData1 = YamlMerger.loadYaml(localPath.resolve(existingYamlPath).toString());
-        Map<String, Object> yamlData2 = YamlMerger.loadYaml(starterConfig.getApplication());
+        Map<String, Object> yamlData2 = YamlMerger.loadYaml(gitHubUtil.getTemplatePath()+"/"+starterConfig.getApplication());
         Map<String, Object> mergedYamlData = YamlMerger.mergeYamlData(yamlData1, yamlData2);
         YamlMerger.saveYaml(mergedYamlData, localPath.resolve(existingYamlPath));
 
 
         //merge pom.xml file
         log.info("Update pom.xml for {} for repo :{}" ,starterConfig.getStarter(), request.getArtifactId());
-        Document pomDoc = PomUtil.mergePoms(localPath.resolve(request.getTargetPomPath()).toString(), starterConfig.getPom());
+        Document pomDoc = PomUtil.mergePoms(localPath.resolve(request.getTargetPomPath()).toString(), gitHubUtil.getTemplatePath()+"/"+starterConfig.getPom());
         PomUtil.saveDocument(pomDoc, localPath.resolve(request.getTargetPomPath()));
 
-        createManifest(localPath);
+//        createManifest(localPath);
     }
 
     public void createManifest(Path localPath) throws IOException {

@@ -6,13 +6,11 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.example.config.CommonConfig;
-import org.json.JSONObject;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -22,18 +20,19 @@ import java.nio.file.Paths;
 public class GitHubUtil {
 
     private CommonConfig commonConfig;
-    private static final String ORG_URI = "https://github.com/sample-starter/";
 
-    public void pushToGitHub(String repoName) throws IOException, GitAPIException, URISyntaxException {
+    public void pushToGitHub(String orgName, String repoName) throws IOException, GitAPIException, URISyntaxException {
 
         log.info("Push changes to GitHub repository: {}", repoName);
 
         Path localPath = Paths.get(System.getProperty("java.io.tmpdir"), repoName);
 
+        deleteLockFile(localPath);
+
         try (Git git = Git.open(localPath.toFile())) {
             git.remoteAdd()
                     .setName("origin")
-                    .setUri(new org.eclipse.jgit.transport.URIish(ORG_URI+repoName+".git"))
+                    .setUri(new org.eclipse.jgit.transport.URIish(String.format(commonConfig.getRepoPattern(), orgName, repoName)))
                     .call();
 
             git.push()
@@ -42,4 +41,27 @@ public class GitHubUtil {
         }
     }
 
+    private void deleteLockFile(Path localPath) throws IOException {
+        Files.walk(localPath)
+                .filter(path -> path.toString().endsWith(".lock"))
+                .forEach(path -> {
+                    try {
+                        Files.delete(path);
+                        log.info("Deleted lock file: " + path);
+                    } catch (IOException e) {
+                        log.info("Failed to delete lock file: " + path);
+                    }
+                });
+
+    }
+
+    public String getTemplatePath() {
+        return System.getProperty("java.io.tmpdir") + this.commonConfig.getStarterId();
+
+    }
+
+    public String getTemplateId() {
+        return this.commonConfig.getStarterId();
+
+    }
 }

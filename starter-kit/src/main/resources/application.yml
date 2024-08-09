@@ -4,6 +4,14 @@ spring:
 
 github:
   token: ${GIT_TOKEN}
+  apiUrl: https://api.github.com
+  repoPattern: "https://github.com/%s/%s.git"
+  starterPattern: "https://github.com/sample-starter/java-paved-road.git"
+  starterId: "starter-templates"
+  templatePath: "java.io.tmpdir/starter-templates"
+
+server:
+  port: 8082
 
 springdoc:
   api-docs:

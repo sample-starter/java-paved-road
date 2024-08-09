@@ -45,7 +45,7 @@ public class InitializerHandler extends Handler {
         try {
             initializeLocalRepository(request);
             if(request.getRequestType() == RequestType.SERVICE) {
-                gitHubUtil.pushToGitHub(request.getArtifactId());
+                gitHubUtil.pushToGitHub(request.getOrganization(), request.getArtifactId());
             }
         }
         catch (IOException | GitAPIException | URISyntaxException | JDOMException e) {
@@ -62,17 +62,17 @@ public class InitializerHandler extends Handler {
         log.info("Copying starter-common code");
 
         Files.createDirectories(localPath.resolve(request.getTargetCodePath()));
-        StarterUtil.copySourceModuleToLocalPath("starter-common/src/main/java/org/example/common",
+        StarterUtil.copySourceModuleToLocalPath(gitHubUtil.getTemplatePath(),"starter-common/src/main/java/org/example/common",
                 localPath.resolve(request.getTargetCodePath()));
 
         log.info("Copying starter-common resources");
-        StarterUtil.copySourceModuleToLocalPath("starter-common/src/main/resources",
+        StarterUtil.copySourceModuleToLocalPath(gitHubUtil.getTemplatePath(),"starter-common/src/main/resources",
                 localPath.resolve(request.getTargetResourcePath()));
 
 
         //initialize root files
         log.info("Copying starter-common root resources");
-        StarterUtil.copySourceModuleToLocalPath("starter-common/src/main/root-resources", localPath);
+        StarterUtil.copySourceModuleToLocalPath(gitHubUtil.getTemplatePath(),"starter-common/src/main/root-resources", localPath);
 
         //pom.xml initialization
         log.info("Modifying pom.xml file");
@@ -84,7 +84,7 @@ public class InitializerHandler extends Handler {
         createManifest(localPath);
 
         // Initialize Git repository
-        Git.init().setDirectory(localPath.toFile()).call();
+        Git result = Git.init().setDirectory(localPath.toFile()).call();
 
         // Add files to Git
         log.info("Create Initial Commit");
@@ -92,6 +92,10 @@ public class InitializerHandler extends Handler {
             git.add().addFilepattern(".").call();
             git.commit().setMessage("Initial commit").call();
         }
+
+        result.getRepository().close();
+        result.close();
+
     }
 
     private void adjustReadme(Path resolve, String artifactId) throws IOException {

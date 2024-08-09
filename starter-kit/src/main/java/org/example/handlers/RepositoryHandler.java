@@ -23,8 +23,6 @@ public class RepositoryHandler extends Handler {
 
     private CommonConfig commonConfig;
 
-    private static final String GITHUB_API_URL = "https://api.github.com";
-
     public RepositoryHandler(CommonConfig config) {
         this.commonConfig = config;
     }
@@ -44,16 +42,18 @@ public class RepositoryHandler extends Handler {
 
         try {
             if (repositoryExists(request.getArtifactId())) {
-                System.out.println("Repository exists, opening...");
+                log.info("Repository exists, opening...");
 
             } else {
-                System.out.println("Repository does not exist, creating...");
-                createGitHubRepository(request.getArtifactId(), request.getDescription(), false);
+                log.info("Repository does not exist, creating...");
+                createGitHubRepository(request.getOrganization(), request.getArtifactId(), request.getDescription(), false);
             }
-            openRepository(request.getArtifactId());
+            openTemplateRepository();
+            openRepository(request.getOrganization(), request.getArtifactId());
             getStaterStatus(request);
         }
         catch (IOException | GitAPIException | JDOMException e) {
+            request.setStatus(StarterRequest.Status.FAILURE);
             throw new HandlerException(e);
         }
     }
@@ -83,7 +83,7 @@ public class RepositoryHandler extends Handler {
         }
     }
 
-    public void createGitHubRepository(String repoName, String description, boolean isPrivate) {
+    public void createGitHubRepository(String orgName, String repoName, String description, boolean isPrivate) {
         RestTemplate restTemplate = new RestTemplate();
 
         JSONObject json = new JSONObject();
@@ -100,7 +100,7 @@ public class RepositoryHandler extends Handler {
         HttpEntity<String> entity = new HttpEntity<>(json.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                GITHUB_API_URL + "/orgs/sample-starter/repos",
+                commonConfig.getGitApiUrl() + String.format("/orgs/%s/repos", orgName),
                 HttpMethod.POST,
                 entity,
                 String.class
@@ -113,17 +113,38 @@ public class RepositoryHandler extends Handler {
         }
     }
 
-    public void openRepository(String repoName) throws IOException, GitAPIException {
-        String repoUrl = "https://github.com/sample-starter/"  + repoName + ".git";
-        Path localPath = Paths.get(System.getProperty("java.io.tmpdir"), repoName);
+    public void openTemplateRepository() throws IOException, GitAPIException {
+        String repoUrl = commonConfig.getStarterPattern();
+        Path localPath = Paths.get(System.getProperty("java.io.tmpdir"), commonConfig.getStarterId());
 
         // Clone the repository if it's not already cloned locally
         if (!Files.exists(localPath)) {
-            Git.cloneRepository()
+            Git result = Git.cloneRepository()
                     .setURI(repoUrl)
                     .setDirectory(localPath.toFile())
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(commonConfig.getGitToken(), ""))
                     .call();
+
+            result.getRepository().close();
+            result.close();
+        }
+    }
+
+    public void openRepository(String orgName, String repoName) throws IOException, GitAPIException {
+//        String repoUrl = "https://github.com/sample-starter/"  + repoName + ".git";
+        String repoUrl = String.format(commonConfig.getRepoPattern(), orgName, repoName);
+        Path localPath = Paths.get(System.getProperty("java.io.tmpdir"), repoName);
+
+        // Clone the repository if it's not already cloned locally
+        if (!Files.exists(localPath)) {
+            Git result = Git.cloneRepository()
+                    .setURI(repoUrl)
+                    .setDirectory(localPath.toFile())
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(commonConfig.getGitToken(), ""))
+                    .call();
+
+            result.getRepository().close();
+            result.close();
         }
     }
 

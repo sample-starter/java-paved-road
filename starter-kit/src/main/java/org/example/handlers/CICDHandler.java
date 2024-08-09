@@ -38,7 +38,7 @@ public class CICDHandler extends Handler {
         if(request.getStatus() == StarterRequest.Status.SUCCESS) {
             try {
                 addCICDSample(request);
-                gitHubUtil.pushToGitHub(request.getArtifactId());
+                gitHubUtil.pushToGitHub(request.getOrganization(), request.getArtifactId());
             }
             catch(IOException | GitAPIException | URISyntaxException e) {
                 throw new HandlerException(e);
@@ -54,7 +54,7 @@ public class CICDHandler extends Handler {
         Files.createDirectories(localPath.resolve(request.getTargetCodePath()));
 
         log.info("Copying source code from start-cicd for repo :{}" , request.getArtifactId());
-        StarterUtil.copySourceModuleToLocalPath("starter-cicd/src/main/resources", localPath);
+        StarterUtil.copySourceModuleToLocalPath(gitHubUtil.getTemplatePath(),"starter-cicd/src/main/resources", localPath);
 
         adjustPipeline(localPath.resolve(".github/workflows"), request.getArtifactId());
         adjustPipeline(localPath.resolve("k8s"), request.getArtifactId());

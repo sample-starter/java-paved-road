@@ -121,6 +121,20 @@
 
     <build>
 
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- Enable Spring Maven plugin so a standalone jar is created during `package` -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+
         <!-- this adds commands to the mvn -->
         <pluginManagement>
             <plugins>
@@ -169,11 +183,6 @@
                     <version>3.1.1</version>
                 </plugin>
 
-                <!-- Enable Spring Maven plugin so a standalone jar is created during `package` -->
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
